@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.msosm.shop.mapper.SystemMapper" >
+
+<select id="findMenusPermisByUserCode" parameterType="string" resultType="cn.msosm.shop.pojo.SysPermissionTree">
+	SELECT
+		*
+	FROM
+		shiro.sys_permission
+	WHERE
+		id IN (
+			SELECT
+				permission_id
+			FROM
+				shiro.sys_user_permission
+			WHERE
+				user_id = (
+					SELECT
+						id
+					FROM
+						shiro.sys_user
+					WHERE
+						usercode = #{usercode}
+				)
+		)
+	AND available = 1 
+	AND type IN (0,1)
+</select>
+
+<select id="getSysPermissionByPams" parameterType="map" resultType="cn.msosm.shop.pojo.SysPermission"> 
+		SELECT
+			*
+		FROM
+			shiro.sys_permission
+		WHERE
+			id IN (
+				SELECT
+					permission_id
+				FROM
+					shiro.sys_user_permission
+				WHERE
+					user_id = (
+						SELECT
+							id
+						FROM
+							shiro.sys_user
+						WHERE
+							usercode = #{userCode}
+					)
+			)
+		AND parentId = #{parentId}
+		AND available = 1
+		AND type = 2 
+</select>
+
+
+<select id="findPermisssionByUserCode" resultType="string" parameterType="string">
+
+SELECT
+	permissions
+FROM
+	shiro.sys_permission
+WHERE
+	id IN (
+		SELECT
+			permission_id
+		FROM
+			shiro.sys_user_permission
+		WHERE
+			user_id = (
+				SELECT
+					id
+				FROM
+					shiro.sys_user
+				WHERE
+					usercode = #{userCode}
+			)
+	)
+AND permissions  IS NOT NULL
+</select>
+
+
+
+
+
+
+
+
+
+</mapper>
